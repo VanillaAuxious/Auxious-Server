@@ -6,6 +6,8 @@
     "start": "nodemon ./server.js"
   },
   "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.11",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -13,6 +15,8 @@
     "jade": "~1.11.0",
     "mongoose": "^6.3.5",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "request": "^2.88.2",
+    "selenium-webdriver": "^4.2.0"
   }
 }
