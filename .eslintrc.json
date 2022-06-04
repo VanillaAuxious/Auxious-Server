@@ -1,0 +1,22 @@
+{
+  "plugins": ["prettier"],
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "indent": ["error", 2],
+    "no-multiple-empty-lines": 2,
+    "no-unused-vars": 1,
+    "no-constant-condition": 1,
+    "no-debugger": 0,
+    "no-control-regex": 0,
+    "no-inner-declarations": 1,
+    "valid-typeof": 1
+  },
+  "sourceType": "module"
+}

@@ -45,16 +45,10 @@ async function run() {
   //
   const auctionListDataSells = await auctionList[1].findElements(By.tagName('td'));
   const auctionBuildingLink = await auctionListDataSells[1].findElement(By.tagName('a'));
-  console.log(await auctionBuildingLink.getTagName());
   await auctionBuildingLink.click();
-  // const info_div = await driver.findElements(By.className('mra_adrs'));
-  // for (let i = 0; i < info_div.length; i++) {
-  //   console.log(await info_div[i].getText());
-  // }
-  // setTimeout(async () => {
-  //   await driver.quit();
-  //   process.exit(0);
-  // }, 3000);
+
+  const buildingData = {};
+
 }
 
 module.exports = run;
