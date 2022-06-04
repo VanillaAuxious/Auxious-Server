@@ -13,6 +13,7 @@
     "jade": "~1.11.0",
     "mongoose": "^6.3.5",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "selenium-webdriver": "^4.2.0"
   }
 }
