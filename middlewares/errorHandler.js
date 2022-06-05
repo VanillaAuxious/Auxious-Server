@@ -3,6 +3,7 @@ const {
   INVALID_TOKEN,
   UNAUTHORIZED_ACCESS,
   TOKEN_EXPIRED,
+  INVALID_EMAIL,
 } = require('../constants/errorConstants');
 
 function errorHandler(err, req, res, next) {
@@ -28,6 +29,12 @@ function errorHandler(err, req, res, next) {
         ok: false,
         status: 401,
         message: '미승인 유저입니다.',
+      });
+    case INVALID_EMAIL:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '이메일 양식이 올바르지 않습니다.',
       });
   }
 

@@ -1,44 +1,22 @@
-const jwt = require('jsonwebtoken');
+const validator = require('express-validator');
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
-const User = require('../model/User');
-const { UNAUTHORIZED_ACCESS } = require('../constants/errorConstants');
+const {
+  UNAUTHORIZED_ACCESS,
+  INVALID_EMAIL,
+} = require('../constants/errorConstants');
+
+const { getTargetUser, createServerToken } = require('../services/userService');
 
 const sendServerToken = asyncCatcher(async (req, res, next) => {
-  if (req.userData.email_verified === false) {
+  const { userData } = req;
+
+  if (!userData.email_verified) {
     return next(new CustomeError(UNAUTHORIZED_ACCESS));
   }
 
-  let user;
-
-  if (!req.userData.id) {
-    const existUser = await User.findOne({
-      email: req.userData.email,
-    });
-
-    if (!existUser) {
-      user = await new User({
-        username: req.userData.name,
-        email: req.userData.email,
-      }).save();
-    } else {
-      user = existUser;
-    }
-  } else {
-    user = await User.findById(req.userData.id);
-  }
-
-  const serverToken = await jwt.sign(
-    {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      description: user.description,
-      favoriteBuildings: user.favoriteBuildings,
-      favoriteRegion: user.favoriteRegion,
-    },
-    process.env.TOKEN_SECRET,
-  );
+  const user = await getTargetUser(userData);
+  const serverToken = await createServerToken(user);
 
   res.cookie('server_token', serverToken);
 

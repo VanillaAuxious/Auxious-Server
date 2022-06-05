@@ -1,5 +1,4 @@
 const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
 
@@ -12,8 +11,6 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
   const isLoggedInBefore = req.cookies['server_token'];
 
   if (isLoggedInBefore) {
-    res.cookie('server_token', req.cookies['server_token']);
-
     return res.json({
       ok: true,
       status: 200,
@@ -27,12 +24,13 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
     return next(new CustomeError(TOKEN_DOES_NOT_EXIST));
   }
 
-  const client = new OAuth2Client(clientId);
   const [bearer, token] = googleToken.split(' ');
 
   if (bearer !== 'Bearer') {
     return next(new CustomeError(INVALID_TOKEN));
   }
+
+  const client = new OAuth2Client(clientId);
 
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -45,9 +43,21 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
   next();
 });
 
-const isLoggedIn = asyncCatcher(async () => {});
+const isLoggedIn = asyncCatcher(async (req, res, next) => {
+  if (!req.cookies['server_token']) {
+    return res.redirect('/login');
+  }
 
-const isLoggedOut = asyncCatcher(async () => {});
+  next();
+});
+
+const isLoggedOut = asyncCatcher(async (req, res, next) => {
+  if (req.cookies['server_token']) {
+    return res.redirect('/');
+  }
+
+  next();
+});
 
 module.exports = {
   verifyToken,
