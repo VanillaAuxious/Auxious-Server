@@ -23,23 +23,23 @@ const buildingSchema = mongoose.Schema({
     required: true,
   },
   connoisseur: {
-    type: Number,
+    type: String,
     required: true,
   },
   lowestPrice: {
-    type: Number,
+    type: String,
   },
-  deposit: Number,
+  deposit: String,
   process: {
-    type: [String],
+    type: [Object],
     default: null,
   },
   tenants: {
-    type: [String],
+    type: [Object],
     default: null,
   },
   causional: {
-    type: [String],
+    type: [Object],
     default: null,
   },
   appraisal: {
@@ -47,9 +47,6 @@ const buildingSchema = mongoose.Schema({
     default: null,
   },
   coords: {
-    type: "Point",
-    coordinates: [x, y],
-    required: true,
   }
 }, {
   timestamps: true,

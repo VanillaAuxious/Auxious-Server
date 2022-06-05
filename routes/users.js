@@ -1,9 +1,11 @@
 const express = require('express');
+
+const { verifyToken } = require('../middlewares/auth');
+const { sendServerToken } = require('../controllers/user.controller');
+
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+router.post('/login', verifyToken, sendServerToken);
 
 module.exports = router;

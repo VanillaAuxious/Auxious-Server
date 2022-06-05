@@ -1,8 +1,11 @@
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const { By, Key, Navigation, until } = require('selenium-webdriver');
+const { By, Key, Navigation, until, locateWith } = require('selenium-webdriver');
 const cheerio = require('cheerio');
 const axios = require('axios');
+const xml2js = require('xml2js');
+const Building = require('../model/Building');
+const { find } = require('../model/Building');
 
 async function run() {
   const service = new chrome.ServiceBuilder('/Users/khan/Desktop/Auxious/Auxious-Server/services/chromedriver').build();
@@ -63,20 +66,27 @@ async function run() {
 
     for (let i = 1; i < auctionList.length; i++) {
       await driver.get(auctionBuildingLink[i - 1]);
-      const source = await driver.getPageSource();
+      // const source = await driver.getPageSource();
       await crawlingAuctionDetail(driver);
       await driver.navigate().back();
-      i = auctionList.length;
     }
   }
 
   await driver.close();
-
 }
 
 async function crawlingAuctionDetail(driver) {
-  const buildingData = {
-  };
+  const process = [];
+  const tenants = [];
+  const causional = [];
+  let appraisal = '';
+  let address = '';
+  let buildingType = '';
+  let connoisseur = '';
+  let lowestPrice = '';
+  let deposit = '';
+  let coords = '';
+
   const pictureElement = await driver.findElements(By.id('dtl_pix'));
   const picture = []; // 사진
   for (let i = 0; i < pictureElement.length; i++) {
@@ -86,43 +96,52 @@ async function crawlingAuctionDetail(driver) {
   const auctionNumberElement = await driver.findElement(By.className('blue'));
   const auctionNumber = await auctionNumberElement.getText(); // 경매번호
 
-  const basicInfoElement = await driver.findElement(By.className('tbl_detail'));
-
-  const addressElement = await basicInfoElement.findElement(By.tagName('td'));
-  const addressDetail = await addressElement.getText();
-  const address = addressDetail.split(',')[0]; //주소
-
-  const buildingTypeElementList = await basicInfoElement.findElements(By.css('tbody > tr'));
-  const buildingTypeElement = await buildingTypeElementList[2].findElement(By.tagName('td'));
-  let buildingType = await buildingTypeElement.getText(); //빌딩 타입
-
-  switch (buildingType) {
-    case '다세대(빌라)' || '다가구':
-      buildingType = '다세대/다가구';
-      break;
-    case '단독주택' || '근린주택':
-      buildingType = '주택';
-      break;
-  };
-
   const squareMetersElement = await driver.findElement(By.className('pink'));
   const koreanSquareMeters = await squareMetersElement.getText();
-  const squareMeters = (parseInt(koreanSquareMeters) * 3.3) + ' ' + koreanSquareMeters; //평
+  const squareMeters = (parseInt(koreanSquareMeters) * 3.3) + ' ' + koreanSquareMeters; //제곱미터
 
-  const connoisseurElementList = await basicInfoElement.findElements(By.className('tdl_right'))
-  const connoisseurElement = await connoisseurElementList[0].findElement(By.tagName('strong'));
-  const connoisseur = await connoisseurElement.getText(); //감정가
+  const basicInfoElement = await driver.findElement(By.className('tbl_detail'));
+  const basicInfoTrTagList = await basicInfoElement.findElements(By.tagName('tr'));
 
-  const lowestPriceElement = await basicInfoElement.findElement(By.className('blue'));
-  const lowestPrice = await lowestPriceElement.getText(); //최저가
+  for (let i = 0; i < basicInfoTrTagList.length; i++) {
+    const basicInfoTitleElement = await basicInfoTrTagList[i].findElements(By.tagName('th'))
+    for (let j = 0; j < basicInfoTitleElement.length; j++) {
+      const basicInfoTitle = await basicInfoTitleElement[j].getText();
+      switch (basicInfoTitle) {
+        case '소재지':
+          const addressElement = await basicInfoTitleElement[j].findElement(By.xpath("following-sibling::*"));
+          address = await addressElement.getText();
+          address = address.split(',')[0]
+          break;
+        case '물건종류':
+          const buildingTypeElement = await basicInfoTitleElement[j].findElement(By.xpath("following-sibling::*"));
+          buildingType = await buildingTypeElement.getText();
+          if (buildingType === '다세대(빌라)' || buildingType === '다가구') {
+            buildingType = '다세대/다가구';
+          }
+          else {
+            buildingType = '주택';
+          }
+          break;
+        case '감정가':
+          const connoisseurElement = await basicInfoTitleElement[j].findElement(By.xpath("following-sibling::*"));
+          connoisseur = await connoisseurElement.getText();
+          break;
+        case '최저가':
+          const lowestPriceElement = await basicInfoTitleElement[j].findElement(By.xpath("following-sibling::*"));
+          lowestPrice = await lowestPriceElement.getText();
+          break;
+        case '입찰보증금':
+          const depositElement = await basicInfoTitleElement[j].findElement(By.xpath("following-sibling::*"));
+          deposit = await depositElement.getText();
+          break;
+      }
+    };
+  }
 
-  const depositElement = await basicInfoElement.findElements(By.className('tdl_right'));
-  let deposit = await depositElement[2].getText(); //보증금
-  deposit = deposit.split(' ')[1];
-
-  const process = []; //진행 일정
   const processElementTable = await driver.findElement(By.id('plan_toward')).findElement(By.className('tbl_detail'));
   const proccessElementList = await processElementTable.findElements(By.tagName('tr'));
+
   for (let i = 1; i < proccessElementList.length; i++) {
     const tempProcess = {};
     const processDetailElement = await proccessElementList[i].findElements(By.tagName('td'));
@@ -131,31 +150,93 @@ async function crawlingAuctionDetail(driver) {
     tempProcess.date = await processDetailElement[2].getText();
     process.push(tempProcess);
   }
-  const detailStockList = await driver.findElements(By.id('dtl_stock'));
-  const tenants = []; //임차인 현황
-  const tenantsElementList = await detailStockList[7].findElements(By.tagName('tr'));
 
-  for (let i = 1; i < tenantsElementList.length; i++) {
-    const tempTenants = {};
-    const tenantsDetailElement = await tenantsElementList[i].findElements(By.tagName('td'));
-    if (tenantsDetailElement.length > 2) {
-      tempTenants.tenantName = await tenantsDetailElement[0].getText();
-      tempTenants.location = await tenantsDetailElement[1].getText();
-      tempTenants.date = await tenantsDetailElement[2].getText();
-      tenants.push(tempTenants);
+  const detailStockList = await driver.findElements(By.id('dtl_stock'));
+  for (let i = 0; i < detailStockList.length; i++) {
+    const detailStockListTitleElement = await detailStockList[i].findElement(By.tagName('h3'));
+    const detailStockListTitle = await detailStockListTitleElement.getText();
+    switch (detailStockListTitle) {
+      case '임차인현황':
+        const tempTenants = {};
+        const tenantsElementList = await detailStockList[i].findElements(By.tagName('tr'));
+
+        for (let i = 1; i < tenantsElementList.length; i++) {
+          const tenantsDetailElement = await tenantsElementList[i].findElements(By.tagName('td'));
+
+          if (tenantsDetailElement.length > 2) {
+            tempTenants.tenantName = await tenantsDetailElement[0].getText();
+            tempTenants.location = await tenantsDetailElement[1].getText();
+            tempTenants.date = await tenantsDetailElement[2].getText();
+            tenants.push(tempTenants);
+          }
+        }
+
+        break;
+      case '주의사항':
+        const tempCaution = {};
+        const cautionList = await detailStockList[i].findElements(By.css('#nojum > ul > li'));
+
+        for (let j = 0; j < cautionList.length; j++) {
+          tempCaution[j] = await cautionList[j].getText();
+        }
+
+        causional.push(tempCaution);
+
+        break;
+      case '감정평가현황':
+        const appraisalElement = await detailStockList[i].findElement(By.id('jraw'));
+        appraisal = appraisalElement.getText();
     }
   }
-
-  console.log(tenants);
-
-
-
-
-
+  coords = await getPointFromAddress(address);
+  const buildingData = {
+    appraisal,
+    causional,
+    tenants,
+    process,
+    deposit,
+    lowestPrice,
+    connoisseur,
+    squareMeters,
+    buildingType,
+    address,
+    auctionNumber,
+    picture,
+    coords,
+  }
+  await saveBuildingData(buildingData)
 }
 
-async function saveBuildingData() {
-
+async function saveBuildingData(buildingData) {
+  const origin = await find({ auctionNumber: buildingData.auctionNumber });
+  if (!origin) {
+    const building = new Building(buildingData);
+    await building.save();
+  }
 }
+
+async function getPointFromAddress(address) {
+  const key = process.env.GEOCODER_KEY;
+  console.log(key);
+  const uri = encodeURI(`http://api.vworld.kr/req/address?service=address&request=getcoord&version=2.0&crs=epsg:4326&address=${address}&refine=true&simple=false&format=xml&type=road&key=${key}`);
+
+  const point = await axios.get(uri);
+  const coords = [];
+  const result = xml2js.parseString(point.data, (err, result) => {
+    const json = JSON.stringify(result, null, 4);
+    const resStatus = JSON.parse(json).response.status;
+
+    if (resStatus[0] !== 'OK') {
+      return null;
+    }
+
+    const x = JSON.parse(json).response.result[0].point[0].x[0] + '';
+    const y = JSON.parse(json).response.result[0].point[0].y[0] + '';
+    coords.push(x, y);
+  });
+
+  return coords;
+}
+
 
 module.exports = run;
