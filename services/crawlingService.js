@@ -9,7 +9,9 @@ async function runAuctionCrawling() {
   const service = new chrome.ServiceBuilder(
     '/Users/khan/Desktop/Auxious/Auxious-Server/services/chromedriver',
   ).build();
+
   chrome.setDefaultService(service);
+
   const driver = await new webdriver.Builder().forBrowser('chrome').build();
 
   await driver.manage().setTimeouts({
@@ -27,12 +29,14 @@ async function runAuctionCrawling() {
 async function autoSearchNextPage(driver) {
   const firstPage = await driver.findElement(By.className('ytb_1st'));
   const firstPageUrl = await firstPage.getAttribute('href');
+
   await driver.get(firstPageUrl);
 
   const orderButtonList = await driver
     .findElement(By.id('sort_btn'))
     .findElement(By.tagName('ul'))
     .findElements(By.tagName('li'));
+
   const dateOrderButton = await orderButtonList[4].findElements(
     By.tagName('a'),
   );
@@ -53,6 +57,7 @@ async function connectToAuctionDetailPage(driver) {
   const auctionListTable = await driver.findElement(
     By.className('tbl_auction_list'),
   );
+
   const auctionList = await auctionListTable.findElements(By.tagName('tr'));
   const auctionBuildingLink = [];
 
@@ -62,6 +67,7 @@ async function connectToAuctionDetailPage(driver) {
     const auctionListDataSells = await auctionList[i].findElements(
       By.tagName('td'),
     );
+
     auctionBuildingLink.push(
       await auctionListDataSells[1]
         .findElement(By.tagName('a'))
@@ -80,27 +86,35 @@ async function loginAuctionPage(driver) {
   const loginPageButton = await driver
     .findElement(By.className('logon'))
     .findElement(By.tagName('a'));
+
   await loginPageButton.click();
 
   const loginInput = await driver.findElement(By.className('mem_id'));
   await loginInput.sendKeys('vanilla');
+
   const passwordInput = await driver.findElement(By.className('mem_pw'));
   await passwordInput.sendKeys('asdasd');
+
   const loginButton = await driver.findElement(By.id('btn_login'));
   await loginButton.click();
 }
 
 async function connectSetAuctionSearchOptions(driver) {
   await driver.get('http://www.my-auction.co.kr/auction/search.php');
+
   const selectRegionMenu = await driver.findElement(By.id('address1_01'));
   await selectRegionMenu.sendKeys('서울특별시');
+
   const selectForSaleTypeCheckBox = await driver
     .findElement(By.className('t_color01'))
     .findElement(By.tagName('input'));
+
   await selectForSaleTypeCheckBox.click();
+
   const totaSearchButton = await driver
     .findElement(By.id('search_btn'))
     .findElement(By.tagName('button'));
+
   await totaSearchButton.click();
 }
 
@@ -109,10 +123,14 @@ async function crawlingAuctionDetail(driver) {
   const squareMeters = await getSquarMetersInfo(driver);
   const picture = await getImgInfo(driver);
   const process = await getProcessInfo(driver);
+
   const [address, buildingType, connoisseur, lowestPrice, deposit] =
     await getBasicInfo(driver);
+
   const [appraisal, caution, tenants] = await getDetailInfo(driver);
+
   const coords = await getCoordsFromAddress(address);
+
   const buildingData = {
     appraisal,
     caution,
@@ -142,6 +160,7 @@ async function getAuctionNumber(driver) {
 async function getSquarMetersInfo(driver) {
   const squareMetersElement = await driver.findElement(By.className('pink'));
   const koreanSquareMeters = await squareMetersElement.getText();
+
   const squareMeters =
     parseInt(koreanSquareMeters) * 3.3 + ' ' + koreanSquareMeters;
 
@@ -149,21 +168,26 @@ async function getSquarMetersInfo(driver) {
 }
 async function getProcessInfo(driver) {
   const process = [];
+
   const processElementTable = await driver
     .findElement(By.id('plan_toward'))
     .findElement(By.className('tbl_detail'));
+
   const proccessElementList = await processElementTable.findElements(
     By.tagName('tr'),
   );
 
   for (let i = 1; i < proccessElementList.length; i++) {
     const tempProcess = {};
+
     const processDetailElement = await proccessElementList[i].findElements(
       By.tagName('td'),
     );
+
     tempProcess.dayProcess = await processDetailElement[0].getText();
     tempProcess.progress = await processDetailElement[1].getText();
     tempProcess.date = await processDetailElement[2].getText();
+
     process.push(tempProcess);
   }
 
@@ -193,6 +217,7 @@ async function getBasicInfo(driver) {
   let deposit = '';
 
   const basicInfoElement = await driver.findElement(By.className('tbl_detail'));
+
   const basicInfoTrTagList = await basicInfoElement.findElements(
     By.tagName('tr'),
   );
@@ -203,6 +228,7 @@ async function getBasicInfo(driver) {
     );
     for (let j = 0; j < basicInfoTitleElement.length; j++) {
       const basicInfoTitle = await basicInfoTitleElement[j].getText();
+
       switch (basicInfoTitle) {
         case '소재지':
           const addressElement = await basicInfoTitleElement[j].findElement(
@@ -211,7 +237,9 @@ async function getBasicInfo(driver) {
 
           address = await addressElement.getText();
           address = address.split(',')[0];
+
           let tempAddress = address.split(' ');
+
           address = tempAddress[0];
 
           for (let i = 1; i < 4; i++) {
@@ -219,11 +247,11 @@ async function getBasicInfo(driver) {
           }
 
           break;
-
         case '물건종류':
           const buildingTypeElement = await basicInfoTitleElement[
             j
           ].findElement(By.xpath('following-sibling::*'));
+
           buildingType = await buildingTypeElement.getText();
 
           if (buildingType === '다세대(빌라)' || buildingType === '다가구') {
@@ -233,23 +261,22 @@ async function getBasicInfo(driver) {
           }
 
           break;
-
         case '감정가':
           const connoisseurElement = await basicInfoTitleElement[j].findElement(
             By.xpath('following-sibling::*'),
           );
+
           connoisseur = await connoisseurElement.getText();
 
           break;
-
         case '최저가':
           const lowestPriceElement = await basicInfoTitleElement[j].findElement(
             By.xpath('following-sibling::*'),
           );
+
           lowestPrice = await lowestPriceElement.getText();
 
           break;
-
         case '입찰보증금':
           const depositElement = await basicInfoTitleElement[j].findElement(
             By.xpath('following-sibling::*'),
@@ -276,6 +303,7 @@ async function getDetailInfo(driver) {
     );
 
     const detailStockListTitle = await detailStockListTitleElement.getText();
+
     switch (detailStockListTitle) {
       case '임차인현황':
         const tempTenants = {};
@@ -297,7 +325,6 @@ async function getDetailInfo(driver) {
         }
 
         break;
-
       case '주의사항':
         const cautionList = await detailStockList[i].findElements(
           By.css('#nojum > ul > li'),
@@ -308,7 +335,6 @@ async function getDetailInfo(driver) {
         }
 
         break;
-
       case '감정평가현황':
         const appraisalElement = await detailStockList[i].findElement(
           By.id('jraw'),

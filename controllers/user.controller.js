@@ -5,7 +5,6 @@ const CustomeError = require('../utils/CustomError');
 const {
   UNAUTHORIZED_ACCESS,
   INVALID_EMAIL,
-  INVALID_TOKEN,
 } = require('../constants/errorConstants');
 
 const { getTargetUser, createServerToken } = require('../services/userService');
