@@ -1,37 +1,44 @@
 const User = require('../model/User');
 const jwt = require('jsonwebtoken');
+const CustomeError = require('../utils/CustomError');
+const { USER_DOES_NOT_EXIST } = require('../constants/errorConstants');
 
 async function getTargetUser(userData) {
-  if (!userData.id) {
-    const existUser = await User.findOne({
-      email: userData.email,
-    });
+  try {
+    let user;
 
-    if (!existUser) {
-      return await new User({
-        username: userData.name,
+    if (!userData.id) {
+      const existUser = await User.findOne({
         email: userData.email,
-      }).save();
+      });
+
+      if (!existUser) {
+        user = await new User({
+          username: userData.name,
+          email: userData.email,
+        }).save();
+      } else {
+        user = existUser;
+      }
+    } else {
+      user = await User.findById(userData.id);
     }
 
-    return existUser;
-  }
-
-  return await User.findById(userData.id);
-}
-
-async function createServerToken(user) {
-  return await jwt.sign(
-    {
+    return {
       id: user._id,
       username: user.username,
       email: user.email,
       description: user.description,
       favoriteBuildings: user.favoriteBuildings,
       favoriteRegion: user.favoriteRegion,
-    },
-    process.env.TOKEN_SECRET,
-  );
+    };
+  } catch {
+    throw new CustomeError(USER_DOES_NOT_EXIST);
+  }
+}
+
+function createServerToken(id) {
+  return jwt.sign(id.toHexString(), process.env.TOKEN_SECRET);
 }
 
 module.exports = {

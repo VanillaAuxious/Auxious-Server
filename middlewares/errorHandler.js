@@ -4,6 +4,7 @@ const {
   UNAUTHORIZED_ACCESS,
   TOKEN_EXPIRED,
   INVALID_EMAIL,
+  USER_DOES_NOT_EXIST,
 } = require('../constants/errorConstants');
 
 function errorHandler(err, req, res, next) {
@@ -36,13 +37,19 @@ function errorHandler(err, req, res, next) {
         status: 400,
         message: '이메일 양식이 올바르지 않습니다.',
       });
+    case USER_DOES_NOT_EXIST:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '이메일 양식이 올바르지 않습니다.',
+      });
   }
 
-  if (err.isOperational) {
+  if (error.isOperational) {
     return res.json({
-      ok: error.ok,
-      status: error.status,
-      message: error.message,
+      ok: false,
+      status: 400,
+      message: error.name,
     });
   }
 
