@@ -56,7 +56,7 @@ const BuildingSchema = mongoose.Schema(
       default: null,
     },
     coords: {
-      coordinates: Array,
+      type: Array,
     },
   },
   {

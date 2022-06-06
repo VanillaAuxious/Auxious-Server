@@ -129,7 +129,7 @@ async function crawlingAuctionDetail(driver) {
     coords,
   };
 
-  await saveBuildingData(buildingData);
+  await saveBuildingData(buildingData, driver);
 }
 
 async function getAuctionNumber(driver) {
@@ -320,14 +320,16 @@ async function getDetailInfo(driver) {
   return [appraisal, caution, tenants];
 }
 
-async function saveBuildingData(buildingData) {
+async function saveBuildingData(buildingData, driver) {
   const origin = await Building.findOne({
-    auctionNumber: buildingData.auctionNumber,
+    coords: buildingData.coords,
   });
 
   if (!origin) {
     const building = new Building(buildingData);
     await building.save();
+  } else {
+    await driver.close();
   }
 }
 
@@ -338,8 +340,7 @@ async function getCoordsFromAddress(address) {
   );
 
   const point = await axios.get(uri);
-  const coords = {};
-  const coordinates = [];
+  const coords = [];
 
   const result = xml2js.parseString(point.data, (err, result) => {
     const json = JSON.stringify(result, null, 4);
@@ -351,10 +352,9 @@ async function getCoordsFromAddress(address) {
 
     const x = JSON.parse(json).response.result[0].point[0].x[0] + '';
     const y = JSON.parse(json).response.result[0].point[0].y[0] + '';
-    coordinates.push(x, y);
+    coords.push(x, y);
   });
 
-  coords['coordinates'] = coordinates;
   return coords;
 }
 
