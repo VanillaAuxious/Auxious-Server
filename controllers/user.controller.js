@@ -1,14 +1,7 @@
-const validator = require('express-validator');
-const jwt = require('jsonwebtoken');
-
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
 
-const {
-  UNAUTHORIZED_ACCESS,
-  INVALID_EMAIL,
-  USER_DOES_NOT_EXIST,
-} = require('../constants/errorConstants');
+const { USER_DOES_NOT_EXIST } = require('../constants/errorConstants');
 const {
   getTargetUser,
   createServerToken,
@@ -17,12 +10,6 @@ const {
 
 const sendServerToken = asyncCatcher(async (req, res, next) => {
   const { userData } = req;
-
-  if (!userData.email_verified) {
-    return next(new CustomeError(UNAUTHORIZED_ACCESS));
-  }
-
-  validator.check('userData.email', INVALID_EMAIL).isEmail().normalizeEmail();
 
   const user = await getTargetUser(userData);
   const serverToken = await createServerToken(user.id);
@@ -37,9 +24,7 @@ const sendServerToken = asyncCatcher(async (req, res, next) => {
 });
 
 const sendLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
-  const userIdToken = req.cookies['server_token'];
-  const userId = jwt.verify(userIdToken, process.env.TOKEN_SECRET);
-
+  const { userId } = req;
   const user = await getTargetUser({ id: userId });
 
   if (!user) {
@@ -55,7 +40,6 @@ const sendLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 
 const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   const { userId } = req.params;
-
   const buildings = await getBuildingsById(userId);
 
   if (!buildings) {

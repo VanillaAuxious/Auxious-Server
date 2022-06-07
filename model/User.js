@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -16,7 +15,7 @@ const userSchema = new mongoose.Schema({
     default: '',
   },
   favoriteBuildings: {
-    type: [mongoose.Schema.Types.ObjectI],
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'Building',
   },
   favoriteRegion: {

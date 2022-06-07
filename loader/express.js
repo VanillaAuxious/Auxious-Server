@@ -24,7 +24,7 @@ async function expressLoader({ app }) {
 
   await routerLoader({ app });
 
-  app.use(function (req, res, next) {
+  app.use((req, res, next) => {
     next(createError(404));
   });
 
