@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     default: '',
   },
   favoriteBuildings: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [mongoose.Schema.Types.ObjectI],
     ref: 'Building',
   },
   favoriteRegion: {

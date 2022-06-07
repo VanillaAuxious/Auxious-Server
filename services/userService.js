@@ -35,7 +35,22 @@ function createServerToken(id) {
   return jwt.sign(id.toHexString(), process.env.TOKEN_SECRET);
 }
 
+async function getBuildingsById(userId) {
+  if (userId) {
+    const buildings = await User.findById(userId).populate('favoriteBuildings');
+
+    if (!buildings) {
+      return [];
+    }
+
+    return buildings;
+  }
+
+  return null;
+}
+
 module.exports = {
   getTargetUser,
   createServerToken,
+  getBuildingsById,
 };

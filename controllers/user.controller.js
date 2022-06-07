@@ -1,13 +1,19 @@
 const validator = require('express-validator');
 const jwt = require('jsonwebtoken');
+
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
+
 const {
   UNAUTHORIZED_ACCESS,
   INVALID_EMAIL,
+  USER_DOES_NOT_EXIST,
 } = require('../constants/errorConstants');
-
-const { getTargetUser, createServerToken } = require('../services/userService');
+const {
+  getTargetUser,
+  createServerToken,
+  getBuildingsById,
+} = require('../services/userService');
 
 const sendServerToken = asyncCatcher(async (req, res, next) => {
   const { userData } = req;
@@ -36,6 +42,10 @@ const sendLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 
   const user = await getTargetUser({ id: userId });
 
+  if (!user) {
+    return next(new CustomeError(USER_DOES_NOT_EXIST));
+  }
+
   res.json({
     ok: true,
     status: 200,
@@ -43,7 +53,24 @@ const sendLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const buildings = await getBuildingsById(userId);
+
+  if (!buildings) {
+    return next(new CustomeError(USER_DOES_NOT_EXIST));
+  }
+
+  res.json({
+    ok: true,
+    status: 200,
+    favoriteBuildings: buildings,
+  });
+});
+
 module.exports = {
   sendServerToken,
   sendLoggedInUserInfo,
+  getFavoriteBuildings,
 };

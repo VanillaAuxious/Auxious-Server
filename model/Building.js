@@ -58,12 +58,14 @@ const BuildingSchema = mongoose.Schema(
     coords: {
       type: Array,
     },
+    user: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'User',
+    },
   },
   {
     timestamps: true,
   },
 );
 
-const Building = mongoose.model('Building', BuildingSchema);
-
-module.exports = Building;
+module.exports = mongoose.model('Building', BuildingSchema);
