@@ -12,6 +12,10 @@ const TenantsSubSchema = mongoose.Schema({
   date: String,
 });
 
+const InterestedUserSubSchema = mongoose.Schema({
+  type: mongoose.Schema.Types.ObjectId,
+});
+
 const BuildingSchema = mongoose.Schema(
   {
     picture: {
@@ -58,12 +62,11 @@ const BuildingSchema = mongoose.Schema(
     coords: {
       type: Array,
     },
+    user: [InterestedUserSubSchema],
   },
   {
     timestamps: true,
   },
 );
 
-const Building = mongoose.model('Building', BuildingSchema);
-
-module.exports = Building;
+module.exports = mongoose.model('Building', BuildingSchema);
