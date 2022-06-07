@@ -7,7 +7,7 @@ const Building = require('../model/Building');
 
 async function runAuctionCrawling() {
   const service = new chrome.ServiceBuilder(
-    '/Users/khan/Desktop/Auxious/Auxious-Server/services/chromedriver',
+    process.env.DRIVER_FILE_PATH,
   ).build();
 
   chrome.setDefaultService(service);
@@ -89,18 +89,21 @@ async function loginAuctionPage(driver) {
 
   await loginPageButton.click();
 
+  const id = process.env.AUCTION_ID;
+  const pw = process.env.AUCTION_PW;
+
   const loginInput = await driver.findElement(By.className('mem_id'));
-  await loginInput.sendKeys('vanilla');
+  await loginInput.sendKeys(id);
 
   const passwordInput = await driver.findElement(By.className('mem_pw'));
-  await passwordInput.sendKeys('asdasd');
+  await passwordInput.sendKeys(pw);
 
   const loginButton = await driver.findElement(By.id('btn_login'));
   await loginButton.click();
 }
 
 async function connectSetAuctionSearchOptions(driver) {
-  await driver.get('http://www.my-auction.co.kr/auction/search.php');
+  await driver.get(process.env.WEB_PATH);
 
   const selectRegionMenu = await driver.findElement(By.id('address1_01'));
   await selectRegionMenu.sendKeys('서울특별시');
