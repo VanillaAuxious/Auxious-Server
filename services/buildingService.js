@@ -9,9 +9,9 @@ async function getTargetBuilding(buildingId) {
     }
 
     return existBuilding;
-  } else {
-    return null;
   }
+
+  return null;
 }
 
 module.exports = {
