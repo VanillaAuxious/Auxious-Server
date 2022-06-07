@@ -37,7 +37,7 @@ function createServerToken(id) {
 
 async function getUserFavoriteBuildings(userId) {
   if (userId) {
-    const Buildings = await User.findById(userId).populate('buildings');
+    const Buildings = await User.findById(userId).populate('favoriteBuildings');
 
     if (!Buildings) {
       return [];
