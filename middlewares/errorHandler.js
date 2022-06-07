@@ -5,6 +5,7 @@ const {
   TOKEN_EXPIRED,
   INVALID_EMAIL,
   USER_DOES_NOT_EXIST,
+  BUILDING_DOES_NOT_EXIST,
 } = require('../constants/errorConstants');
 
 function errorHandler(err, req, res, next) {
@@ -42,6 +43,12 @@ function errorHandler(err, req, res, next) {
         ok: false,
         status: 400,
         message: '이메일 양식이 올바르지 않습니다.',
+      });
+    case BUILDING_DOES_NOT_EXIST:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '존재하지 않는 건물입니다.',
       });
   }
 
