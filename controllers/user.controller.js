@@ -12,7 +12,7 @@ const {
 const {
   getTargetUser,
   createServerToken,
-  getUserFavoriteBuildings,
+  getBuildingsById,
 } = require('../services/userService');
 
 const sendServerToken = asyncCatcher(async (req, res, next) => {
@@ -56,7 +56,7 @@ const sendLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   const { userId } = req.params;
 
-  const buildings = await getUserFavoriteBuildings(userId);
+  const buildings = await getBuildingsById(userId);
 
   if (!buildings) {
     return next(new CustomeError(USER_DOES_NOT_EXIST));

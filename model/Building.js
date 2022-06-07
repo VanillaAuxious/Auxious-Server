@@ -12,10 +12,6 @@ const TenantsSubSchema = mongoose.Schema({
   date: String,
 });
 
-const InterestedUserSubSchema = mongoose.Schema({
-  type: mongoose.Schema.Types.ObjectId,
-});
-
 const BuildingSchema = mongoose.Schema(
   {
     picture: {
@@ -62,7 +58,10 @@ const BuildingSchema = mongoose.Schema(
     coords: {
       type: Array,
     },
-    user: [InterestedUserSubSchema],
+    user: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'User',
+    },
   },
   {
     timestamps: true,
