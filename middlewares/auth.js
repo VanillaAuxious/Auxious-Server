@@ -1,4 +1,5 @@
 const validator = require('express-validator');
+const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
@@ -42,7 +43,6 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
 
   const payload = ticket.getPayload();
 
-
   if (!payload.email_verified) {
     return next(new CustomeError(UNAUTHORIZED_ACCESS));
   }
@@ -59,6 +59,7 @@ const isLoggedIn = asyncCatcher(async (req, res, next) => {
     return res.redirect('/login');
   }
 
+  const userIdToken = req.cookies['server_token'];
   const userId = jwt.verify(userIdToken, process.env.TOKEN_SECRET);
   req.userId = userId;
 

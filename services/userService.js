@@ -27,7 +27,7 @@ async function getTargetUser(userData) {
     email: user.email,
     description: user.description,
     favoriteBuildings: user.favoriteBuildings,
-    favoriteRegion: user.favoriteRegion,
+    favoriteRegions: user.favoriteRegions,
   };
 }
 
@@ -35,22 +35,12 @@ function createServerToken(id) {
   return jwt.sign(id.toHexString(), process.env.TOKEN_SECRET);
 }
 
-async function getBuildingsById(userId) {
-  if (userId) {
-    const buildings = await User.findById(userId).populate('favoriteBuildings');
-
-    if (!buildings) {
-      return [];
-    }
-
-    return buildings;
-  }
-
-  return null;
+async function getFieldById(model, id, fieldName) {
+  return (await model.findById(id))[fieldName];
 }
 
 module.exports = {
   getTargetUser,
   createServerToken,
-  getBuildingsById,
+  getFieldById,
 };
