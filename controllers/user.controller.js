@@ -125,8 +125,6 @@ const deleteFavoriteRegion = asyncCatcher(async (req, res, next) => {
   const { regionName } = req.params;
   const { userId } = req;
 
-  console.log(regionName);
-
   await User.findByIdAndUpdate(userId, {
     $pull: {
       favoriteRegions: regionName,
