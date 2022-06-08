@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const { getBuildingInfo } = require('../controllers/building.controller');
+const {
+  getBuildingInfo,
+  getBuildingsOnMap,
+} = require('../controllers/building.controller');
 const { isLoggedIn } = require('../middlewares/auth');
 
+router.get('/', isLoggedIn, getBuildingsOnMap);
 router.get('/:buildingId', isLoggedIn, getBuildingInfo);
 
 module.exports = router;
