@@ -47,6 +47,7 @@ const getLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 
 const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
+  
   const favoriteBuildings = await getFieldById(
     User,
     userId,
@@ -67,7 +68,7 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
 const getFavoriteRegions = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
   const favoriteRegions = await getFieldById(User, userId, 'favoriteRegions');
-
+  
   res.json({
     ok: true,
     status: 200,
