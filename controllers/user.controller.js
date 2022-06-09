@@ -5,6 +5,8 @@ const User = require('../model/User');
 const {
   USER_DOES_NOT_EXIST,
   BUILDING_DOES_NOT_EXIST,
+  FOUND_NO_FIELD,
+  FOUND_NO_DATA,
 } = require('../constants/errorConstants');
 
 const {
@@ -45,6 +47,7 @@ const getLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 
 const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
+  
   const favoriteBuildings = await getFieldById(
     User,
     userId,
@@ -65,7 +68,7 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
 const getFavoriteRegions = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
   const favoriteRegions = await getFieldById(User, userId, 'favoriteRegions');
-
+  
   res.json({
     ok: true,
     status: 200,
@@ -137,6 +140,29 @@ const deleteFavoriteRegion = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const updateUserField = asyncCatcher(async (req, res, next) => {
+  const { fieldName, newFieldData } = req.body;
+  const { userId } = req;
+
+  if (!fieldName) {
+    return next(new CustomeError(FOUND_NO_FIELD));
+  }
+
+  if (!newFieldData.trim()) {
+    return next(new CustomeError(FOUND_NO_DATA));
+  }
+
+  await User.findByIdAndUpdate(userId, {
+    [fieldName]: newFieldData,
+  });
+
+  return res.json({
+    ok: true,
+    status: 200,
+    updatedData: newFieldData,
+  });
+});
+
 module.exports = {
   getServerToken,
   getLoggedInUserInfo,
@@ -146,4 +172,5 @@ module.exports = {
   postFavoriteRegion,
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
+  updateUserField,
 };

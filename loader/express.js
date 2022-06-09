@@ -22,7 +22,7 @@ async function expressLoader({ app }) {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  await routerLoader({ app });
+  routerLoader({ app });
 
   app.use((req, res, next) => {
     next(createError(404));

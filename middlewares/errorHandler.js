@@ -6,6 +6,8 @@ const {
   INVALID_EMAIL,
   USER_DOES_NOT_EXIST,
   BUILDING_DOES_NOT_EXIST,
+  FOUND_NO_FIELD,
+  FOUND_NO_DATA,
 } = require('../constants/errorConstants');
 
 function errorHandler(err, req, res, next) {
@@ -49,6 +51,18 @@ function errorHandler(err, req, res, next) {
         ok: false,
         status: 400,
         message: '존재하지 않는 건물입니다.',
+      });
+    case FOUND_NO_FIELD:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '필드 이름이 없습니다.',
+      });
+    case FOUND_NO_DATA:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '업데이트할 데이터가 없습니다.',
       });
   }
 

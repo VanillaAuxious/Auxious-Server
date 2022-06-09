@@ -11,12 +11,17 @@ const {
   postFavoriteRegion,
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
+  updateUserField,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
 
 router.post('/login', verifyToken, getServerToken);
-router.get('/user', isLoggedIn, getLoggedInUserInfo);
+router
+  .route('/user')
+  .get(isLoggedIn, getLoggedInUserInfo)
+  .patch(isLoggedIn, updateUserField);
+
 router
   .route('/user/favorites/buildings')
   .get(isLoggedIn, getFavoriteBuildings)
