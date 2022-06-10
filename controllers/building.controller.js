@@ -4,7 +4,6 @@ const CustomeError = require('../utils/CustomError');
 const Building = require('../model/Building');
 
 const { getTargetBuilding } = require('../services/buildingService');
-const { getCoordsFromAddress } = require('../utils/helpers');
 const { BUILDING_DOES_NOT_EXIST } = require('../constants/errorConstants');
 
 const getBuildingInfo = asyncCatcher(async (req, res, next) => {
@@ -23,70 +22,28 @@ const getBuildingInfo = asyncCatcher(async (req, res, next) => {
 });
 
 const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
-  if (!req.params.address) {
-    const { coords, 'max-distance': maxDistance, show } = req.query;
+  let { coords, 'max-distance': maxDistance } = req.query;
+  const x = Number(coords.split(',')[0]);
+  const y = Number(coords.split(',')[1]);
+  maxDistance = Number(maxDistance);
 
-    const buildings = await Building.find()
-      .where('coords')
-      .near({
-        center: { type: 'Point', coordinates: coords },
-        maxDistance,
-      });
+  const auctions = await Building.find({
+    coords: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [y, x],
+        },
+        $maxDistance: maxDistance,
+      },
+    },
+  });
 
-    if (show === 'only-auctions') {
-      return res.json({
-        ok: true,
-        status: 200,
-        regions: buildings,
-      });
-    }
-
-    // const allForSale = await forSale
-    //   .find()
-    //   .where('coords')
-    //   .near({
-    //     center: { type: 'Point', coordinates: coords },
-    //     maxDistance,
-    //   })
-
-    // return res.json({
-    //   ok: true,
-    //   status: 200,
-    //   regions: [...buildings, ...allForSale]
-    // });
-  }
-
-  const { address, 'max-distsance': maxDistance, show } = req.query;
-  const coords = await getCoordsFromAddress(address);
-
-  const buildings = await Building.find()
-    .where('coords')
-    .near({
-      center: { type: 'Point', coordinates: coords },
-      maxDistance,
-    });
-
-  if (show === 'only-auctions') {
-    return res.json({
-      ok: true,
-      status: 200,
-      regions: buildings,
-    });
-  }
-
-  // const allForSale = await forSale
-  //   .find()
-  //   .where('coords')
-  //   .near({
-  //     center: { type: 'Point', coordinates: coords },
-  //     maxDistance,
-  //   });
-
-  // return res.json({
-  //   ok: true,
-  //   status: 200,
-  //   regions: [...buildings, ...allForSale],
-  // });
+  return res.json({
+    ok: true,
+    status: 200,
+    auctions: auctions,
+  });
 });
 
 module.exports = {
