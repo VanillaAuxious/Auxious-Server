@@ -12,6 +12,18 @@ const TenantsSubSchema = mongoose.Schema({
   date: String,
 });
 
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['Point'],
+    required: true,
+  },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
+});
+
 const BuildingSchema = mongoose.Schema(
   {
     picture: {
@@ -56,7 +68,7 @@ const BuildingSchema = mongoose.Schema(
       default: null,
     },
     coords: {
-      type: Array,
+      type: pointSchema,
     },
     user: {
       type: [mongoose.Schema.Types.ObjectId],

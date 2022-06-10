@@ -18,9 +18,9 @@ async function getCoordsFromAddress(address) {
       return null;
     }
 
-    const x = JSON.parse(json).response.result[0].point[0].x[0] + '';
-    const y = JSON.parse(json).response.result[0].point[0].y[0] + '';
-    coords.push(x, y);
+    const x = JSON.parse(json).response.result[0].point[0].x[0];
+    const y = JSON.parse(json).response.result[0].point[0].y[0];
+    coords.push(y, x);
   });
 
   return coords;
