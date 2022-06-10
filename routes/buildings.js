@@ -7,7 +7,7 @@ const {
 } = require('../controllers/building.controller');
 const { isLoggedIn } = require('../middlewares/auth');
 
-router.get('/', isLoggedIn, getBuildingsOnMap);
+router.get('/', getBuildingsOnMap);
 router.get('/:buildingId', isLoggedIn, getBuildingInfo);
 
 module.exports = router;

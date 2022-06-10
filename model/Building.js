@@ -21,7 +21,6 @@ const pointSchema = new mongoose.Schema({
   coordinates: {
     type: [Number],
     required: true,
-    index: '2dsphere',
   },
 });
 
@@ -70,6 +69,7 @@ const BuildingSchema = mongoose.Schema(
     },
     coords: {
       type: pointSchema,
+      index: '2dsphere',
     },
     user: {
       type: [mongoose.Schema.Types.ObjectId],

@@ -144,6 +144,7 @@ async function crawlingAuctionDetail(driver) {
   const [appraisal, caution, tenants] = await getDetailInfo(driver);
 
   const point = await getCoordsFromAddress(address);
+
   const coords = {
     type: 'Point',
     coordinates: point,
@@ -365,7 +366,6 @@ async function getDetailInfo(driver) {
 }
 
 async function saveBuildingData(buildingData, driver) {
-  console.log(buildingData);
   const origin = await Building.findOne({
     coords: buildingData.coords,
   });
