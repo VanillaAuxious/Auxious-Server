@@ -4,7 +4,6 @@ const CustomeError = require('../utils/CustomError');
 const Building = require('../model/Building');
 
 const { getTargetBuilding } = require('../services/buildingService');
-const { getCoordsFromAddress } = require('../utils/helpers');
 const { BUILDING_DOES_NOT_EXIST } = require('../constants/errorConstants');
 
 const getBuildingInfo = asyncCatcher(async (req, res, next) => {
@@ -23,12 +22,12 @@ const getBuildingInfo = asyncCatcher(async (req, res, next) => {
 });
 
 const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
-  let { coords, 'max-distance': maxDistance, show } = req.query;
+  let { coords, 'max-distance': maxDistance } = req.query;
   const x = Number(coords.split(',')[0]);
   const y = Number(coords.split(',')[1]);
   maxDistance = Number(maxDistance);
 
-  const buildings = await Building.find({
+  const auctions = await Building.find({
     coords: {
       $near: {
         $geometry: {
@@ -39,10 +38,11 @@ const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
       },
     },
   });
+
   return res.json({
     ok: true,
     status: 200,
-    auctions: buildings,
+    auctions: auctions,
   });
 });
 
