@@ -39,7 +39,6 @@ const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
       },
     },
   });
-
   return res.json({
     ok: true,
     status: 200,
