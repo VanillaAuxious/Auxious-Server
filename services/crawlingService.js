@@ -46,11 +46,18 @@ async function autoSearchNextPage(driver) {
 
   let newUrl = firstPageUrl;
   newUrl = newUrl.replace('page=1', 'page=0');
+  let i = 0;
 
-  for (let i = 1; i < 31; i++) {
+  while (true) {
     newUrl = newUrl.replace(`page=${i}`, `page=${i + 1}`);
     await driver.get(newUrl);
-    await connectToAuctionDetailPage(driver);
+
+    if (driver.getCurrentUrl().toString().includes('kuipernet')) return 'stop';
+
+    const result = await connectToAuctionDetailPage(driver);
+
+    if (result === 'stop') return 'stop';
+    i++;
   }
 }
 
@@ -78,7 +85,10 @@ async function connectToAuctionDetailPage(driver) {
 
   for (let i = 1; i < auctionList.length; i++) {
     await driver.get(auctionBuildingLink[i - 1]);
-    await crawlingAuctionDetail(driver);
+    const result = await crawlingAuctionDetail(driver);
+
+    if (result === 'stop') return 'stop';
+
     await driver.navigate().back();
   }
 }
@@ -133,7 +143,12 @@ async function crawlingAuctionDetail(driver) {
 
   const [appraisal, caution, tenants] = await getDetailInfo(driver);
 
-  const coords = await getCoordsFromAddress(address);
+  const point = await getCoordsFromAddress(address);
+
+  const coords = {
+    type: 'Point',
+    coordinates: point,
+  };
 
   const buildingData = {
     appraisal,
@@ -151,7 +166,8 @@ async function crawlingAuctionDetail(driver) {
     coords,
   };
 
-  await saveBuildingData(buildingData, driver);
+  const result = await saveBuildingData(buildingData, driver);
+  if (result === 'stop') return 'stop';
 }
 
 async function getAuctionNumber(driver) {
@@ -241,13 +257,12 @@ async function getBasicInfo(driver) {
 
           address = await addressElement.getText();
           address = address.split(',')[0];
-
           let tempAddress = address.split(' ');
 
           address = tempAddress[0];
 
           for (let i = 1; i < 4; i++) {
-            address = ' ' + tempAddress[i];
+            address += ' ' + tempAddress[i];
           }
 
           break;
@@ -359,7 +374,7 @@ async function saveBuildingData(buildingData, driver) {
     const building = new Building(buildingData);
     await building.save();
   } else {
-    await driver.close();
+    // return 'stop';
   }
 }
 
