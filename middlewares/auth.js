@@ -1,62 +1,51 @@
-const validator = require('express-validator');
 const jwt = require('jsonwebtoken');
-const { OAuth2Client } = require('google-auth-library');
 const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
+
+const { ACCESS_TOKEN_URL } = require('../constants/urlConstants');
 
 const {
   TOKEN_DOES_NOT_EXIST,
   INVALID_TOKEN,
-  UNAUTHORIZED_ACCESS,
-  INVALID_EMAIL,
+  NOT_LOGGED_IN,
 } = require('../constants/errorConstants');
+const { default: axios } = require('axios');
 
 const verifyToken = asyncCatcher(async (req, res, next) => {
-  const isLoggedInBefore = req.cookies['server_token'];
+  const { code } = req.body;
 
-  if (isLoggedInBefore) {
-    return res.json({
-      ok: true,
-      status: 200,
-    });
-  }
+  const accessToken = (
+    await axios.post(`${ACCESS_TOKEN_URL}&code=${code}`)
+  ).data
+    .split('=')[1]
+    .split('&')[0];
 
-  const clientId = req.body.clientId;
-  const googleToken = req.body.token;
-
-  if (!googleToken) {
-    return next(new CustomeError(TOKEN_DOES_NOT_EXIST));
-  }
-
-  const [bearer, token] = googleToken.split(' ');
-
-  if (bearer !== 'Bearer') {
+  if (!accessToken) {
     return next(new CustomeError(INVALID_TOKEN));
   }
 
-  const client = new OAuth2Client(clientId);
+  const userData = (
+    await axios.get('https://api.github.com/user', {
+      headers: {
+        Authorization: `token ${accessToken}`,
+      },
+    })
+  ).data;
 
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: clientId,
-  });
+  const userInfo = {
+    name: userData.login,
+    email: userData.email ? userData.email : `${userData.login}@gmail.com`,
+    profileImage: userData.avatar_url,
+  };
 
-  const payload = ticket.getPayload();
-
-  if (!payload.email_verified) {
-    return next(new CustomeError(UNAUTHORIZED_ACCESS));
-  }
-
-  validator.check('payload.email', INVALID_EMAIL).isEmail().normalizeEmail();
-
-  req.userData = payload;
+  req.userData = userInfo;
 
   next();
 });
 
 const isLoggedIn = asyncCatcher(async (req, res, next) => {
   if (!req.cookies['server_token']) {
-    return res.redirect('/login');
+    return next(new Error(TOKEN_DOES_NOT_EXIST));
   }
 
   const userIdToken = req.cookies['server_token'];
@@ -68,7 +57,7 @@ const isLoggedIn = asyncCatcher(async (req, res, next) => {
 
 const isLoggedOut = asyncCatcher(async (req, res, next) => {
   if (req.cookies['server_token']) {
-    return res.redirect('/');
+    return next(new Error(NOT_LOGGED_IN));
   }
 
   next();

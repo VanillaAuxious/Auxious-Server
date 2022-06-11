@@ -8,6 +8,7 @@ const {
   BUILDING_DOES_NOT_EXIST,
   FOUND_NO_FIELD,
   FOUND_NO_DATA,
+  NOT_LOGGED_IN,
 } = require('../constants/errorConstants');
 
 function errorHandler(err, req, res, next) {
@@ -21,6 +22,12 @@ function errorHandler(err, req, res, next) {
         ok: false,
         status: 400,
         message: '인증 토큰이 존재하지 않습니다.',
+      });
+    case NOT_LOGGED_IN:
+      return res.json({
+        ok: false,
+        status: 400,
+        message: '로그인하지 않았습니다.',
       });
     case (INVALID_TOKEN, TOKEN_EXPIRED):
       return res.json({

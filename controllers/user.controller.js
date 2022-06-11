@@ -1,4 +1,5 @@
 const asyncCatcher = require('../utils/asyncCatcher');
+const validator = require('express-validator');
 const CustomeError = require('../utils/CustomError');
 const User = require('../model/User');
 
@@ -7,6 +8,7 @@ const {
   BUILDING_DOES_NOT_EXIST,
   FOUND_NO_FIELD,
   FOUND_NO_DATA,
+  INVALID_EMAIL,
 } = require('../constants/errorConstants');
 
 const {
@@ -17,6 +19,8 @@ const {
 
 const getServerToken = asyncCatcher(async (req, res, next) => {
   const { userData } = req;
+
+  validator.check('userData.email', INVALID_EMAIL).isEmail().normalizeEmail();
 
   const user = await getTargetUser(userData);
   const serverToken = createServerToken(user.id);
@@ -47,7 +51,6 @@ const getLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
 
 const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
-
   const favoriteBuildings = await getFieldById(
     User,
     userId,

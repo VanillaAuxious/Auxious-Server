@@ -13,6 +13,7 @@ async function getTargetUser(userData) {
       user = await new User({
         username: userData.name,
         email: userData.email,
+        profileImage: userData.profileImage,
       }).save();
     } else {
       user = existUser;
@@ -26,6 +27,7 @@ async function getTargetUser(userData) {
     username: user.username,
     email: user.email,
     description: user.description,
+    profileImage: user.profileImage,
     favoriteBuildings: user.favoriteBuildings,
     favoriteRegions: user.favoriteRegions,
   };
