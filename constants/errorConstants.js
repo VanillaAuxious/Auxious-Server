@@ -8,4 +8,5 @@ module.exports = {
   BUILDING_DOES_NOT_EXIST: 'Building does not exist',
   FOUND_NO_FIELD: 'Found no field',
   FOUND_NO_DATA: 'Found no data',
+  NOT_LOGGED_IN: 'Not logged in',
 };

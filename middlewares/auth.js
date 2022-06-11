@@ -7,6 +7,7 @@ const { ACCESS_TOKEN_URL } = require('../constants/urlConstants');
 const {
   TOKEN_DOES_NOT_EXIST,
   INVALID_TOKEN,
+  NOT_LOGGED_IN,
 } = require('../constants/errorConstants');
 const { default: axios } = require('axios');
 
@@ -34,6 +35,7 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
   const userInfo = {
     name: userData.login,
     email: userData.email ? userData.email : `${userData.login}@gmail.com`,
+    profileImage: userData.avatar_url,
   };
 
   req.userData = userInfo;
@@ -55,7 +57,7 @@ const isLoggedIn = asyncCatcher(async (req, res, next) => {
 
 const isLoggedOut = asyncCatcher(async (req, res, next) => {
   if (req.cookies['server_token']) {
-    return res.redirect('/');
+    return next(new Error(NOT_LOGGED_IN));
   }
 
   next();
