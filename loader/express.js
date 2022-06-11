@@ -17,6 +17,7 @@ async function expressLoader({ app }) {
         'https://teamproject-auxios.netlify.app',
         'https://teamproject-auxios-test.netlify.app',
       ],
+
       credentials: true,
     }),
   );
