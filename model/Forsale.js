@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['Point'],
+    required: true,
+  },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
+});
+
 const ForsaleSchema = mongoose.Schema({
   forSalesId: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -20,7 +32,8 @@ const ForsaleSchema = mongoose.Schema({
     type: String,
   },
   coords: {
-    type: Array,
+    type: pointSchema,
+    index: '2dsphere',
   },
 });
 
