@@ -25,9 +25,7 @@ const getServerToken = asyncCatcher(async (req, res, next) => {
   const user = await getTargetUser(userData);
   const serverToken = createServerToken(user.id);
 
-  res.setHeader('set-cookie', [
-    `server_token=${serverToken}; samesite: none; secure;`,
-  ]);
+  res.cookie('server_token', serverToken);
 
   res.json({
     ok: true,

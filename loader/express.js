@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const logger = require('morgan');
 const routerLoader = require('./router');
 const errorHandler = require('../middlewares/errorHandler');
@@ -25,6 +26,17 @@ async function expressLoader({ app }) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
+  app.use(
+    session({
+      resave: false,
+      saveUninitialized: false,
+      secret: process.env.SESSION_SECRET,
+      cookie: {
+        sameSite: 'none',
+        secure: true,
+      },
+    }),
+  );
 
   routerLoader({ app });
 
