@@ -13,7 +13,7 @@ async function expressLoader({ app }) {
   app.use(
     cors({
       origin: [
-        process.env.ENV === 'development' && 'http://localhost:3000',
+        process.env.ENV === 'dev' && 'http://localhost:3000',
         'https://teamproject-auxios.netlify.app',
         'https://teamproject-auxios-test.netlify.app',
       ],
