@@ -7,6 +7,7 @@ router.get('/', function (req, res, next) {
     ok: true,
     status: 200,
     message: 'this is server',
+    cliEnvIsWorking: !!process.env.ENV,
   });
 });
 
