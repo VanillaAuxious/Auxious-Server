@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ENV=development nodemon ./server.js",
-    "prod": "node server.js"
+    "start": "ENV=dev nodemon ./server.js",
+    "prod": "ENV=prod node server.js",
+    "prod:test": "ENV=test node server.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -13,7 +14,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.1",
-    "express": "~4.16.1",
+    "express": "^4.18.1",
     "express-validator": "^6.14.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",

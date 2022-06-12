@@ -6,7 +6,8 @@ router.get('/', function (req, res, next) {
   res.json({
     ok: true,
     status: 200,
-    message: 'this is server',
+    message: 'this is a server',
+    cliEnvIsWorking: !!process.env.ENV,
   });
 });
 
