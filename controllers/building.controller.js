@@ -2,6 +2,7 @@ const asyncCatcher = require('../utils/asyncCatcher');
 const CustomeError = require('../utils/CustomError');
 
 const Building = require('../model/Building');
+const ForSale = require('../model/ForSale');
 
 const { getTargetBuilding } = require('../services/buildingService');
 const { getCoordsFromAddress } = require('../utils/helpers');
@@ -40,10 +41,23 @@ const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
     },
   });
 
+  const forSales = await ForSale.find({
+    coords: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [y, x],
+        },
+        $maxDistance: maxDistance,
+      },
+    },
+  });
+
   return res.json({
     ok: true,
     status: 200,
     auctions: auctions,
+    forSales: forSales,
   });
 });
 

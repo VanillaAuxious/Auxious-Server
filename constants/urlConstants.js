@@ -20,4 +20,3 @@ if (process.env.ENV === PROD) {
 
 module.exports = {
   ACCESS_TOKEN_URL: `https://github.com/login/oauth/access_token?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`,
-};

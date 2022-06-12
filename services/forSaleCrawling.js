@@ -87,7 +87,11 @@ async function connectToDetailPage(driver) {
 
 async function crawlingDetail(driver) {
   const [name, address, squareMeters, price] = await getBasicInfo(driver);
-  const coords = await getCoordsFromAddress(name);
+  const point = await getCoordsFromAddress(name);
+  const coords = {
+    type: 'Point',
+    coordinates: point,
+  };
   const forSaleData = {
     name,
     address,
@@ -95,8 +99,6 @@ async function crawlingDetail(driver) {
     price,
     coords,
   };
-
-  console.log(forSaleData);
 
   await saveForSaleData(forSaleData, driver);
 }

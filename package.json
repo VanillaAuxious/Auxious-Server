@@ -23,6 +23,7 @@
     "mongoose": "^6.3.5",
     "mongoose-geojson-schema": "^2.2.2",
     "morgan": "~1.9.1",
+    "multer": "^1.4.5-lts.1",
     "object-assign": "^4.1.1",
     "selenium-webdriver": "^4.2.0",
     "xml2js": "^0.4.23"

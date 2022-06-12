@@ -2,6 +2,19 @@ const express = require('express');
 
 const { verifyToken, isLoggedIn } = require('../middlewares/auth');
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now());
+  },
+});
+
+const upload = multer({ storage: storage });
+
 const {
   getServerToken,
   getLoggedInUserInfo,
@@ -12,6 +25,7 @@ const {
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
   updateUserField,
+  updateUserImage,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
@@ -21,6 +35,10 @@ router
   .route('/user')
   .get(isLoggedIn, getLoggedInUserInfo)
   .patch(isLoggedIn, updateUserField);
+
+router
+  .route('/user/image')
+  .post(upload.single('img'), isLoggedIn, updateUserImage);
 
 router
   .route('/user/favorites/buildings')
