@@ -13,10 +13,6 @@ const pointSchema = new mongoose.Schema({
 });
 
 const ForsaleSchema = mongoose.Schema({
-  forSalesId: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Forsale',
-  },
   name: {
     type: String,
     required: true,

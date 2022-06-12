@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
   },
   favoriteBuildings: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Building',
   },
   favoriteRegions: {
     type: [String],

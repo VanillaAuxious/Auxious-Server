@@ -61,7 +61,22 @@ const getBuildingsOnMap = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const getAuctions = asyncCatcher(async (req, res, next) => {
+  const auctions = await Building.find({});
+
+  if (!auctions) {
+    return next(new CustomeError(BUILDING_DOES_NOT_EXIST));
+  }
+
+  res.json({
+    ok: true,
+    status: 200,
+    auctions: auctions,
+  });
+});
+
 module.exports = {
+  getAuctions,
   getBuildingInfo,
   getBuildingsOnMap,
 };
