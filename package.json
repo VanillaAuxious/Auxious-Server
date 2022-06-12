@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ENV=development nodemon ./server.js",
-    "prod": "node server.js"
+    "start": "ENV=dev nodemon ./server.js",
+    "prod": "ENV=prod node server.js",
+    "prod:test": "ENV=test node server.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
