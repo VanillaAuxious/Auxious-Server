@@ -166,7 +166,26 @@ const updateUserField = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const updateUserImage = asyncCatcher(async (req, res, next) => {
+  const img = req.file.filename;
+
+  if (!img) {
+    return next(new CustomeError(FOUND_NO_DATA));
+  }
+
+  await User.findByIdAndUpdate(userId, {
+    profileImage: img,
+  });
+
+  return res.json({
+    ok: true,
+    status: 200,
+    updatedData: img,
+  });
+});
+
 module.exports = {
+  updateUserImage,
   getServerToken,
   getLoggedInUserInfo,
   getFavoriteBuildings,
