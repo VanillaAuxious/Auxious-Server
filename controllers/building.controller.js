@@ -5,7 +5,6 @@ const Building = require('../model/Building');
 const ForSale = require('../model/ForSale');
 
 const { getTargetBuilding } = require('../services/buildingService');
-const { getCoordsFromAddress } = require('../utils/helpers');
 const { BUILDING_DOES_NOT_EXIST } = require('../constants/errorConstants');
 
 const getBuildingInfo = asyncCatcher(async (req, res, next) => {
