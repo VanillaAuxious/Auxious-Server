@@ -2,6 +2,8 @@ const asyncCatcher = require('../utils/asyncCatcher');
 const validator = require('express-validator');
 const CustomeError = require('../utils/CustomError');
 const User = require('../model/User');
+const mongoose = require('mongoose');
+const Building = require('../model/Building');
 
 const {
   USER_DOES_NOT_EXIST,
@@ -25,7 +27,7 @@ const getServerToken = asyncCatcher(async (req, res, next) => {
   const user = await getTargetUser(userData);
   const serverToken = createServerToken(user.id);
 
-  res.cookie('server_token', serverToken);
+  res.cookie('server_token', serverToken, { sameSite: 'none', secure: true });
 
   res.json({
     ok: true,
@@ -57,6 +59,13 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
     'favoriteBuildings',
   );
 
+  const favoriteBuildingsInfoArray = [];
+
+  for (let i = 0; i < favoriteBuildings.length; i++) {
+    favoriteBuildingsInfoArray.push(
+      await Building.findById(favoriteBuildings[i]),
+    );
+  }
   if (!favoriteBuildings) {
     next(new CustomeError(BUILDING_DOES_NOT_EXIST));
   }
@@ -64,7 +73,7 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   res.json({
     ok: true,
     status: 200,
-    favoriteBuildings,
+    favoriteBuildingsInfoArray,
   });
 });
 
@@ -112,10 +121,9 @@ const postFavoriteRegion = asyncCatcher(async (req, res, next) => {
 });
 
 const deleteFavoriteBuilding = asyncCatcher(async (req, res, next) => {
-  const { buildingId } = req.params;
+  const buildingId = req.params.buildingId;
   const { userId } = req;
-
-  await User.findByIdAndUpdate(userId, {
+  const user = await User.findByIdAndUpdate(userId, {
     $pull: {
       favoriteBuildings: buildingId,
     },
@@ -124,6 +132,7 @@ const deleteFavoriteBuilding = asyncCatcher(async (req, res, next) => {
   res.json({
     ok: true,
     status: 200,
+    user: user,
   });
 });
 
@@ -166,7 +175,26 @@ const updateUserField = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const updateUserImage = asyncCatcher(async (req, res, next) => {
+  const img = req.file.filename;
+
+  if (!img) {
+    return next(new CustomeError(FOUND_NO_DATA));
+  }
+
+  await User.findByIdAndUpdate(userId, {
+    profileImage: img,
+  });
+
+  return res.json({
+    ok: true,
+    status: 200,
+    updatedData: img,
+  });
+});
+
 module.exports = {
+  updateUserImage,
   getServerToken,
   getLoggedInUserInfo,
   getFavoriteBuildings,
