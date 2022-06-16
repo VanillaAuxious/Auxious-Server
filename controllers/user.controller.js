@@ -194,7 +194,39 @@ const updateUserImage = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const getUserContract = asyncCatcher(async (req, res, next) => {
+  const { userId } = req;
+
+  const user = await User.findById(userId);
+
+  return res.json({
+    ok: true,
+    status: 200,
+    contract: user.contract,
+  });
+});
+
+const updateUserContract = asyncCatcher(async (req, res, next) => {
+  const pdfURI = req.body.contract;
+  const { userId } = req;
+
+  if (!pdfURI) {
+    return next(new CustomeError(FOUND_NO_DATA));
+  }
+
+  await User.findByIdAndUpdate(userId, {
+    $push: { contract: pdfURI },
+  });
+
+  return res.json({
+    ok: true,
+    status: 200,
+  });
+});
+
 module.exports = {
+  getUserContract,
+  updateUserContract,
   updateUserImage,
   getServerToken,
   getLoggedInUserInfo,
