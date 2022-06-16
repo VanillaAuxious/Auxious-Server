@@ -1,6 +1,7 @@
 const axios = require('axios');
 const xml2js = require('xml2js');
 
+
 async function getCoordsFromAddress(address) {
   const key = process.env.GEOCODER_KEY;
   const uri = encodeURI(
@@ -34,3 +35,4 @@ async function getCoordsFromAddress(address) {
 module.exports = {
   getCoordsFromAddress,
 };
+

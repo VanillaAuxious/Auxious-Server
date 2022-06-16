@@ -1,8 +1,7 @@
 const express = require('express');
+const multer = require('multer');
 
 const { verifyToken, isLoggedIn } = require('../middlewares/auth');
-
-const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -28,6 +27,7 @@ const {
   updateUserImage,
   updateUserContract,
   getUserContract,
+  deleteDeviceToken,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
@@ -68,6 +68,11 @@ router.delete(
   '/user/favorites/regions/:regionName',
   isLoggedIn,
   deleteFavoriteRegion,
+);
+
+router.delete(
+  '/user/device-token',
+  deleteDeviceToken,
 );
 
 module.exports = router;
