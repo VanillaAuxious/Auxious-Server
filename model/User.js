@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
   },
   favoriteRegions: {
     type: [String],
-    default: [],
+  },
+  currentDeviceToken: {
+    type: String,
+    default: '',
   },
 });
 
