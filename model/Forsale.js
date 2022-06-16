@@ -32,5 +32,6 @@ const ForsaleSchema = mongoose.Schema({
     index: '2dsphere',
   },
 });
+= mongoose.model('ForSale', ForSaleSchema);
 
 module.exports = mongoose.model('Forsale', ForsaleSchema);

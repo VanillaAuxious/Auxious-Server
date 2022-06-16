@@ -139,12 +139,13 @@ async function getBasicInfo(driver) {
   return [name, address, squareMeters, price];
 }
 
-async function saveForSaleData(forSaleData) {
-  const origin = await Forsale.findOne({ coords: forSaleData.coords });
+async function saveForSaleData(forSaleData, driver) {
+  const origin = await ForSale.findOne({ coords: forSaleData.coords });
+  const address = await ForSale.findOne({ address: forSaleData.address });
 
-  if (!origin) {
-    const forsale = new Forsale(forSaleData);
-    await forsale.save();
+  if (!origin && !address) {
+    const forSale = new ForSale(forSaleData);
+    await forSale.save();
   }
 }
 
