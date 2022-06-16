@@ -226,7 +226,6 @@ const updateUserContract = asyncCatcher(async (req, res, next) => {
 
 const deleteDeviceToken = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
-  console.log(userId);
 
   await User.findByIdAndUpdate(userId, {
     currentDeviceToken: '',

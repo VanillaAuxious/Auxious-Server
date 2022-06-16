@@ -5,9 +5,8 @@ async function getTargetUser(userData, currentDeviceToken) {
   let user;
 
   if (!userData.id) {
-    const existUser = await User.findOneAndUpdate({
+    const existUser = await User.findOne({
       email: userData.email,
-      currentDeviceToken,
     });
 
     if (!existUser) {
@@ -16,15 +15,18 @@ async function getTargetUser(userData, currentDeviceToken) {
         email: userData.email,
         profileImage: userData.profileImage,
         currentDeviceToken,
+        contract: [],
       }).save();
     } else {
       user = existUser;
     }
   } else {
-    user = await User.findByIdAndUpdate(userData.id, {
-      currentDeviceToken,
-    });
+    user = await User.findById(userData.id);
   }
+
+  await User.findByIdAndUpdate(user._id, {
+    currentDeviceToken,
+  });
 
   return {
     id: user._id,
