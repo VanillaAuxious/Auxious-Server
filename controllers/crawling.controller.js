@@ -4,7 +4,7 @@ const User = require('../model/User');
 const asyncCatcher = require('../utils/asyncCatcher');
 
 const sendFavoriteRegionNoti = asyncCatcher(async (req, res, next) => {
-  const { region, auctionNumber } = req.body;
+  const { region, auctionNumber, buildingId } = req.body;
 
   const loggedInTargetUser = await User.find()
     .where('favoriteRegions')
@@ -16,6 +16,7 @@ const sendFavoriteRegionNoti = asyncCatcher(async (req, res, next) => {
   const notificationData = {
     title: `New Auction in ${region}`,
     body: `Number : ${auctionNumber}`,
+    buildingId,
   };
 
   sendNotificationToClient(tokens, notificationData);
