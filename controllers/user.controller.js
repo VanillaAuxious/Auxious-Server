@@ -21,10 +21,11 @@ const {
 
 const getServerToken = asyncCatcher(async (req, res, next) => {
   const { userData } = req;
+  const { deviceToken } = req.body;
 
   validator.check('userData.email', INVALID_EMAIL).isEmail().normalizeEmail();
 
-  const user = await getTargetUser(userData);
+  const user = await getTargetUser(userData, deviceToken);
   const serverToken = createServerToken(user.id);
 
   res.cookie('server_token', serverToken, { sameSite: 'none', secure: true });

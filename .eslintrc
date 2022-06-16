@@ -9,7 +9,7 @@
     "es6": true
   },
   "rules": {
-    "indent": ["error", 2, { "SwitchCase": "off" }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "no-multiple-empty-lines": 2,
     "no-unused-vars": 1,
     "no-constant-condition": 1,
@@ -17,6 +17,7 @@
     "no-control-regex": 0,
     "no-inner-declarations": 1,
     "no-undef": 0,
-    "valid-typeof": 1
+    "valid-typeof": 1,
+    "no-case-declarations": 0
   }
 }

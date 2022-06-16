@@ -1,7 +1,7 @@
 const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 
-async function getTargetUser(userData) {
+async function getTargetUser(userData, currentDeviceToken) {
   let user;
 
   if (!userData.id) {
@@ -14,6 +14,7 @@ async function getTargetUser(userData) {
         username: userData.name,
         email: userData.email,
         profileImage: userData.profileImage,
+        currentDeviceToken,
       }).save();
     } else {
       user = existUser;
