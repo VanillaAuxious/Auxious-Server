@@ -1,8 +1,7 @@
 const express = require('express');
+const multer = require('multer');
 
 const { verifyToken, isLoggedIn } = require('../middlewares/auth');
-
-const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

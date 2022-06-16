@@ -1,25 +1,23 @@
+const User = require('../model/User');
+const asyncCatcher = require('../utils/asyncCatcher');
+
 const { sendNotificationToClient } = require('../config/notify');
 
-async function addMessage(req, res) {
-  const { name, message } = req.body;
-  const columns = 'name, message';
-  const values = `'${name}', '${message}'`;
+const sendFavoriteRegionNoti = asyncCatcher(async (req, res, next) => {
+  const { region, auctionNumber } = req.body
 
-  try {
-    const data = await messagesModel.insertWithReturn(columns, values);
-    const tokens = [];
-    const notificationData = {
-      title: 'New message',
-      body: message,
-    };
+  const loggedInTargetUsers = await User.find().where('favoriteRegions').in([`${region}`]).where('currentDeviceToken').ne('');
+  const tokens = loggedInTargetUsers.map((user) => user.currentDeviceToken);
 
-    sendNotificationToClient(tokens, notificationData);
-    res.status(200).json({ messages: data.rows });
-  } catch (err) {
-    res.status(200).json({ messages: err.stack });
-  }
-}
+  const notificationData = {
+    title: `New Auction in ${region}`,
+    body: `Number: ${auctionNumber}`,
+  };
+
+  sendNotificationToClient(tokens, notificationData);
+});
+
 
 module.exports = {
-  addMessage,
+  sendFavoriteRegionNoti,
 };
