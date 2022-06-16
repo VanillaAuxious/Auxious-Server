@@ -12,7 +12,7 @@ const pointSchema = new mongoose.Schema({
   },
 });
 
-const ForsaleSchema = mongoose.Schema({
+const ForSaleSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -32,6 +32,5 @@ const ForsaleSchema = mongoose.Schema({
     index: '2dsphere',
   },
 });
-= mongoose.model('ForSale', ForSaleSchema);
 
-module.exports = mongoose.model('Forsale', ForsaleSchema);
+module.exports = mongoose.model('ForSale', ForSaleSchema);
