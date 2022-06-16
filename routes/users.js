@@ -72,6 +72,7 @@ router.delete(
 
 router.delete(
   '/user/device-token',
+  isLoggedIn,
   deleteDeviceToken,
 );
 
