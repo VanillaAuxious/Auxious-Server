@@ -2,7 +2,6 @@ const asyncCatcher = require('../utils/asyncCatcher');
 const validator = require('express-validator');
 const CustomeError = require('../utils/CustomError');
 const User = require('../model/User');
-const mongoose = require('mongoose');
 const Building = require('../model/Building');
 
 const {
