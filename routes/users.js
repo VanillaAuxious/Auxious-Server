@@ -26,11 +26,14 @@ const {
   deleteFavoriteRegion,
   updateUserField,
   updateUserImage,
+  updateUserContract,
+  getUserContract,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
 
 router.post('/login', verifyToken, getServerToken);
+
 router
   .route('/user')
   .get(isLoggedIn, getLoggedInUserInfo)
@@ -39,6 +42,11 @@ router
 router
   .route('/user/image')
   .post(upload.single('img'), isLoggedIn, updateUserImage);
+
+router
+  .route('/user/contract')
+  .post(isLoggedIn, updateUserContract)
+  .get(isLoggedIn, getUserContract);
 
 router
   .route('/user/favorites/buildings')
