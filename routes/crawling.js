@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/push-noti', (req, res, next) => {
+const { sendFavoriteRegionNoti } = require('../controllers/crawling.controller');
 
-});
+router.post('/push-noti', sendFavoriteRegionNoti);
 
 module.exports = router;

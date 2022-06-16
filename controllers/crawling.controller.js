@@ -15,6 +15,11 @@ const sendFavoriteRegionNoti = asyncCatcher(async (req, res, next) => {
   };
 
   sendNotificationToClient(tokens, notificationData);
+
+  res.json({
+    ok: true,
+    status: 200,
+  });
 });
 
 
