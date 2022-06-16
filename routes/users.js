@@ -27,6 +27,7 @@ const {
   updateUserImage,
   updateUserContract,
   getUserContract,
+  deleteDeviceToken,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
@@ -67,6 +68,12 @@ router.delete(
   '/user/favorites/regions/:regionName',
   isLoggedIn,
   deleteFavoriteRegion,
+);
+
+router.delete(
+  '/user/device-token',
+  isLoggedIn,
+  deleteDeviceToken,
 );
 
 module.exports = router;

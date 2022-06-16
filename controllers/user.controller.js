@@ -224,6 +224,20 @@ const updateUserContract = asyncCatcher(async (req, res, next) => {
   });
 });
 
+const deleteDeviceToken = asyncCatcher(async (req, res, next) => {
+  const { userId } = req;
+  console.log(userId);
+
+  await User.findByIdAndUpdate(userId, {
+    currentDeviceToken: '',
+  });
+
+  res.json({
+    ok: true,
+    status: 200,
+  });
+});
+
 module.exports = {
   getUserContract,
   updateUserContract,
@@ -237,4 +251,5 @@ module.exports = {
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
   updateUserField,
+  deleteDeviceToken,
 };
