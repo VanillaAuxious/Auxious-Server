@@ -160,7 +160,7 @@ const updateUserField = asyncCatcher(async (req, res, next) => {
     return next(new CustomeError(FOUND_NO_FIELD));
   }
 
-  if (!newFieldData.trim()) {
+  if (fieldName !== 'description' && !newFieldData.trim()) {
     return next(new CustomeError(FOUND_NO_DATA));
   }
 
