@@ -28,9 +28,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  contract: {
-    type: [String],
-  },
+  contract: [Object],
 });
 
 module.exports = mongoose.model('User', userSchema);

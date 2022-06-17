@@ -206,15 +206,15 @@ const getUserContract = asyncCatcher(async (req, res, next) => {
 });
 
 const updateUserContract = asyncCatcher(async (req, res, next) => {
-  const pdfURI = req.body.contract;
+  const contract = req.body.contract;
   const { userId } = req;
 
-  if (!pdfURI) {
+  if (!contract) {
     return next(new CustomeError(FOUND_NO_DATA));
   }
 
   await User.findByIdAndUpdate(userId, {
-    $push: { contract: pdfURI },
+    $push: { contract: { contract } },
   });
 
   return res.json({
