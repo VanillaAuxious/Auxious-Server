@@ -45,19 +45,27 @@ async function autoSearchNextPage(driver) {
   await dateOrderButton[1].click();
 
   let newUrl = firstPageUrl;
-  newUrl = newUrl.replace('page=1', 'page=0');
   let i = 0;
 
+  const newOrderButtonList = await driver
+    .findElement(By.id('sort_btn'))
+    .findElement(By.tagName('ul'))
+    .findElements(By.tagName('li'));
+
+  const newDateOrderButton = await newOrderButtonList[4].findElements(
+    By.tagName('a'),
+  );
+  await newDateOrderButton[1].click();
   while (true) {
     newUrl = newUrl.replace(`page=${i}`, `page=${i + 1}`);
-    await driver.get(newUrl);
-
-    if (driver.getCurrentUrl().toString().includes('kuipernet')) return 'stop';
+    // if (driver.getCurrentUrl().toString().includes('kuipernet')) return 'stop';
 
     const result = await connectToAuctionDetailPage(driver);
 
-    if (result === 'stop') return 'stop';
+    // if (result === 'stop') return 'stop';
     i++;
+
+    await driver.get(newUrl);
   }
 }
 
@@ -86,7 +94,6 @@ async function connectToAuctionDetailPage(driver) {
   for (let i = 1; i < auctionList.length; i++) {
     await driver.get(auctionBuildingLink[i - 1]);
     const result = await crawlingAuctionDetail(driver);
-
     if (result === 'stop') return 'stop';
 
     await driver.navigate().back();
@@ -178,13 +185,18 @@ async function getAuctionNumber(driver) {
 }
 
 async function getSquarMetersInfo(driver) {
-  const squareMetersElement = await driver.findElement(By.className('pink'));
-  const koreanSquareMeters = await squareMetersElement.getText();
+  try {
+    const squareMetersElement = await driver.findElement(By.className('pink'));
+    const koreanSquareMeters = await squareMetersElement.getText();
 
-  const squareMeters =
-    parseInt(koreanSquareMeters) * 3.3 + ' ' + koreanSquareMeters;
+    const squareMeters =
+      parseInt(koreanSquareMeters) * 3.3 + ' ' + koreanSquareMeters;
 
-  return squareMeters;
+    return squareMeters;
+  } catch {
+    const squareMeters = '333';
+    return squareMeters;
+  }
 }
 async function getProcessInfo(driver) {
   const process = [];
@@ -273,10 +285,18 @@ async function getBasicInfo(driver) {
 
           buildingType = await buildingTypeElement.getText();
 
-          if (buildingType === '다세대(빌라)' || buildingType === '다가구') {
+          if (
+            buildingType === '다세대(빌라)' ||
+            buildingType === '다가구' ||
+            buildingType === '다가구(원룸등)'
+          ) {
             buildingType = '다세대/다가구';
-          } else {
+          } else if (buildingType === '주택' || buildingType === '근린주택') {
             buildingType = '주택';
+          } else if (buildingType === '아파트') {
+            buildingType = '아파트';
+          } else if (buildingType === '오피스텔') {
+            buildingType = '오피스텔/원룸';
           }
 
           break;
@@ -355,10 +375,15 @@ async function getDetailInfo(driver) {
 
         break;
       case '감정평가현황':
-        const appraisalElement = await detailStockList[i].findElement(
-          By.id('jraw'),
-        );
-        appraisal = await appraisalElement.getText();
+        try {
+          const appraisalElement = await detailStockList[i].findElement(
+            By.id('jraw'),
+          );
+
+          appraisal = await appraisalElement.getText();
+        } catch {
+          continue;
+        }
     }
   }
 
@@ -366,16 +391,15 @@ async function getDetailInfo(driver) {
 }
 
 async function saveBuildingData(buildingData, driver) {
-  const origin = await Building.findOne({
-    coords: buildingData.coords,
-  });
-
-  if (!origin) {
-    const building = new Building(buildingData);
-    await building.save();
-  } else {
-    // return 'stop';
-  }
+  // const origin = await Building.findOne({
+  //   auctionNumber: buildingData.auctionNumber,
+  // });
+  // if (!origin) {
+  // const building = new Building(buildingData);
+  // await building.save();
+  // } else {
+  // return 'stop';
+  // }
 }
 
 module.exports = runAuctionCrawling;
