@@ -216,7 +216,7 @@ const updateUserContract = asyncCatcher(async (req, res, next) => {
   await User.findByIdAndUpdate(userId, {
     $push: { contract: { contract } },
   });
-
+  console.log(await User.findById(userId));
   return res.json({
     ok: true,
     status: 200,
