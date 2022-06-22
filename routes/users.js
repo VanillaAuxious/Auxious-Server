@@ -12,7 +12,6 @@ const {
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
   updateUserField,
-  updateUserImage,
   updateUserContract,
   getUserContract,
   deleteDeviceToken,
@@ -29,8 +28,8 @@ router
 
 router
   .route('/user/contract')
-  .post(isLoggedIn, updateUserContract)
-  .get(isLoggedIn, getUserContract);
+  .get(isLoggedIn, getUserContract)
+  .post(isLoggedIn, updateUserContract);
 
 router
   .route('/user/favorites/buildings')

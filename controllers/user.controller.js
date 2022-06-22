@@ -66,6 +66,7 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
       await Building.findById(favoriteBuildings[i]),
     );
   }
+
   if (!favoriteBuildings) {
     next(new CustomeError(BUILDING_DOES_NOT_EXIST));
   }
@@ -123,7 +124,7 @@ const postFavoriteRegion = asyncCatcher(async (req, res, next) => {
 const deleteFavoriteBuilding = asyncCatcher(async (req, res, next) => {
   const buildingId = req.params.buildingId;
   const { userId } = req;
-  const user = await User.findByIdAndUpdate(userId, {
+  await User.findByIdAndUpdate(userId, {
     $pull: {
       favoriteBuildings: buildingId,
     },
@@ -132,7 +133,7 @@ const deleteFavoriteBuilding = asyncCatcher(async (req, res, next) => {
   res.json({
     ok: true,
     status: 200,
-    user: user,
+    deletedId: buildingId,
   });
 });
 
@@ -149,6 +150,7 @@ const deleteFavoriteRegion = asyncCatcher(async (req, res, next) => {
   res.json({
     ok: true,
     status: 200,
+    deletedRegion: regionName,
   });
 });
 
@@ -172,24 +174,6 @@ const updateUserField = asyncCatcher(async (req, res, next) => {
     ok: true,
     status: 200,
     updatedData: newFieldData,
-  });
-});
-
-const updateUserImage = asyncCatcher(async (req, res, next) => {
-  const img = req.file.filename;
-
-  if (!img) {
-    return next(new CustomeError(FOUND_NO_DATA));
-  }
-
-  await User.findByIdAndUpdate(userId, {
-    profileImage: img,
-  });
-
-  return res.json({
-    ok: true,
-    status: 200,
-    updatedData: img,
   });
 });
 
@@ -239,7 +223,6 @@ const deleteDeviceToken = asyncCatcher(async (req, res, next) => {
 module.exports = {
   getUserContract,
   updateUserContract,
-  updateUserImage,
   getServerToken,
   getLoggedInUserInfo,
   getFavoriteBuildings,
