@@ -1,18 +1,6 @@
 const express = require('express');
-const multer = require('multer');
 
 const { verifyToken, isLoggedIn } = require('../middlewares/auth');
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now());
-  },
-});
-
-const upload = multer({ storage: storage });
 
 const {
   getServerToken,
@@ -24,7 +12,6 @@ const {
   deleteFavoriteBuilding,
   deleteFavoriteRegion,
   updateUserField,
-  updateUserImage,
   updateUserContract,
   getUserContract,
   deleteDeviceToken,
@@ -40,13 +27,9 @@ router
   .patch(isLoggedIn, updateUserField);
 
 router
-  .route('/user/image')
-  .post(upload.single('img'), isLoggedIn, updateUserImage);
-
-router
   .route('/user/contract')
-  .post(isLoggedIn, updateUserContract)
-  .get(isLoggedIn, getUserContract);
+  .get(isLoggedIn, getUserContract)
+  .post(isLoggedIn, updateUserContract);
 
 router
   .route('/user/favorites/buildings')
@@ -70,10 +53,6 @@ router.delete(
   deleteFavoriteRegion,
 );
 
-router.delete(
-  '/user/device-token',
-  isLoggedIn,
-  deleteDeviceToken,
-);
+router.delete('/user/device-token', isLoggedIn, deleteDeviceToken);
 
 module.exports = router;
