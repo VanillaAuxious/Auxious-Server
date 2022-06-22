@@ -8,7 +8,7 @@ const cors = require('cors');
 const { connectDB } = require('../config/db');
 
 async function expressLoader({ app }) {
-  connectDB();
+  await connectDB();
 
   app.use(
     cors({

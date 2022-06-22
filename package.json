@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ENV=dev nodemon ./server.js",
     "prod": "ENV=prod node server.js",
-    "prod:test": "ENV=test node server.js"
+    "prod:test": "ENV=test node server.js",
+    "test": "ENV=dev jest"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -29,10 +30,15 @@
     "selenium-webdriver": "^4.2.0",
     "xml2js": "^0.4.23"
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "devDependencies": {
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "nodemon": "^2.0.16"
+    "jest": "^28.1.1",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
   }
 }
