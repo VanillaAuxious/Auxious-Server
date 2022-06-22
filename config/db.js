@@ -4,12 +4,12 @@ const mongoose = require('mongoose');
 mongoose.connection.once('open', () => console.log('db connected'));
 mongoose.connection.on('error', (error) => console.log(error));
 
-function connectDB() {
-  mongoose.connect(process.env.MONGODB_URL);
+async function connectDB() {
+  await mongoose.connect(process.env.MONGODB_URL);
 }
 
-function disconnectDB() {
-  mongoose.disconnect();
+async function disconnectDB() {
+  await mongoose.disconnect();
 }
 
 module.exports = {
