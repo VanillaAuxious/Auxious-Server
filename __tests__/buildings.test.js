@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 const app = require('../app');
 const { connectDB, disconnectDB } = require('../config/db');
 const User = require('../model/User');
 const Building = require('../model/Building');
-const jwt = require('jsonwebtoken');
 const Forsale = require('../model/Forsale');
 
 describe('buildings', () => {
