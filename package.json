@@ -6,7 +6,7 @@
     "start": "ENV=dev nodemon ./server.js",
     "prod": "ENV=prod node server.js",
     "prod:test": "ENV=test node server.js",
-    "test": "ENV=dev jest"
+    "test": "ENV=dev jest --watch"
   },
   "dependencies": {
     "axios": "^0.27.2",
