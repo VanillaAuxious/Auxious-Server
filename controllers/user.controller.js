@@ -1,6 +1,6 @@
 const asyncCatcher = require('../utils/asyncCatcher');
 const validator = require('express-validator');
-const CustomeError = require('../utils/CustomError');
+const CustomError = require('../utils/CustomError');
 const User = require('../model/User');
 const Building = require('../model/Building');
 
@@ -41,7 +41,7 @@ const getLoggedInUserInfo = asyncCatcher(async (req, res, next) => {
   const user = await getTargetUser({ id: userId });
 
   if (!user) {
-    return next(new CustomeError(USER_DOES_NOT_EXIST));
+    return next(new CustomError(USER_DOES_NOT_EXIST));
   }
 
   res.json({
@@ -68,7 +68,7 @@ const getFavoriteBuildings = asyncCatcher(async (req, res, next) => {
   }
 
   if (!favoriteBuildings) {
-    next(new CustomeError(BUILDING_DOES_NOT_EXIST));
+    next(new CustomError(BUILDING_DOES_NOT_EXIST));
   }
 
   res.json({
@@ -159,11 +159,11 @@ const updateUserField = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
 
   if (!fieldName) {
-    return next(new CustomeError(FOUND_NO_FIELD));
+    return next(new CustomError(FOUND_NO_FIELD));
   }
 
   if (fieldName !== 'description' && !newFieldData.trim()) {
-    return next(new CustomeError(FOUND_NO_DATA));
+    return next(new CustomError(FOUND_NO_DATA));
   }
 
   await User.findByIdAndUpdate(userId, {
@@ -194,13 +194,13 @@ const updateUserContract = asyncCatcher(async (req, res, next) => {
   const { userId } = req;
 
   if (!contract) {
-    return next(new CustomeError(FOUND_NO_DATA));
+    return next(new CustomError(FOUND_NO_DATA));
   }
 
   await User.findByIdAndUpdate(userId, {
     $push: { contract: { contract } },
   });
-  console.log(await User.findById(userId));
+
   return res.json({
     ok: true,
     status: 200,

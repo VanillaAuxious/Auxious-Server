@@ -1,4 +1,4 @@
-class CustomeError extends Error {
+class CustomError extends Error {
   constructor(name) {
     super();
     this.name = name;
@@ -7,4 +7,4 @@ class CustomeError extends Error {
   }
 }
 
-module.exports = CustomeError;
+module.exports = CustomError;
