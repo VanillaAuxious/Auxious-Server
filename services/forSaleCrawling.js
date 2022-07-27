@@ -2,8 +2,6 @@ const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const { By, until } = require('selenium-webdriver');
 
-const Forsale = require('../model/Forsale');
-
 const { getCoordsFromAddress } = require('../utils/helpers');
 
 async function runForSaleCrawling() {

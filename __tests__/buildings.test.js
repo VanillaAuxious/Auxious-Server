@@ -6,7 +6,7 @@ const app = require('../app');
 const { connectDB, disconnectDB } = require('../config/db');
 const User = require('../model/User');
 const Building = require('../model/Building');
-const Forsale = require('../model/Forsale');
+const Forsale = require('../model/ForSale');
 
 describe('buildings', () => {
   let serverToken,
