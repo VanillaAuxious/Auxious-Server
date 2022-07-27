@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const asyncCatcher = require('../utils/asyncCatcher');
-const CustomeError = require('../utils/CustomError');
+const CustomError = require('../utils/CustomError');
 
 const { ACCESS_TOKEN_URL } = require('../constants/urlConstants');
 
@@ -21,7 +21,7 @@ const verifyToken = asyncCatcher(async (req, res, next) => {
     .split('&')[0];
 
   if (!accessToken) {
-    return next(new CustomeError(INVALID_TOKEN));
+    return next(new CustomError(INVALID_TOKEN));
   }
 
   const userData = (

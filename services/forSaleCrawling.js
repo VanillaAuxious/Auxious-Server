@@ -54,8 +54,6 @@ async function autoSearchNextPage(driver) {
 
     const nextLink = await driver.findElement(By.linkText(`${i}`));
     await nextLink.click();
-
-    console.log(By.linkText(`${i}`));
   }
 }
 
@@ -137,7 +135,7 @@ async function getBasicInfo(driver) {
   return [name, address, squareMeters, price];
 }
 
-async function saveForSaleData(forSaleData, driver) {
+async function saveForSaleData(forSaleData) {
   const origin = await ForSale.findOne({ coords: forSaleData.coords });
   const address = await ForSale.findOne({ address: forSaleData.address });
 

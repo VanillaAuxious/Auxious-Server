@@ -1,5 +1,5 @@
 const asyncCatcher = require('../utils/asyncCatcher');
-const CustomeError = require('../utils/CustomError');
+const CustomError = require('../utils/CustomError');
 
 const Building = require('../model/Building');
 const ForSale = require('../model/ForSale');
@@ -12,7 +12,7 @@ const getBuildingInfo = asyncCatcher(async (req, res, next) => {
   const building = await getTargetBuilding(buildingId);
 
   if (!building) {
-    return next(new CustomeError(BUILDING_DOES_NOT_EXIST));
+    return next(new CustomError(BUILDING_DOES_NOT_EXIST));
   }
 
   res.json({
@@ -64,7 +64,7 @@ const getAuctions = asyncCatcher(async (req, res, next) => {
   const auctions = await Building.find({});
 
   if (!auctions) {
-    return next(new CustomeError(BUILDING_DOES_NOT_EXIST));
+    return next(new CustomError(BUILDING_DOES_NOT_EXIST));
   }
 
   res.json({
