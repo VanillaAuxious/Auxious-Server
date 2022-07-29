@@ -47,6 +47,11 @@ const BuildingSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    /** connoisseur는 감정가(감정하는 사람)라는 뜻입니다. 감정 가격이라는 뜻인줄 알고 프로퍼티 이름을 초기에 잘못 지었습니다.
+     * 현재 크롤렁 대상 사이트의 robots.txt에 크롤링 허용 여부가 disallowed로 변경되고 사이트 HTML 구조가 바뀌어서 이름을 바꿀 수가 없는 상황입니다.
+     * (기존 데이터를 지우고 이름을 바꿔서 새로 크롤링 하는것이 불가능합니다.)
+     * 감정가(Appraised Price)라는 뜻으로 이해해주시면 감사하겠습니다.
+     */
     connoisseur: {
       type: String,
       required: true,
