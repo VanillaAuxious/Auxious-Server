@@ -3,20 +3,40 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./server.js"
+    "start": "ENV=dev nodemon ./server.js",
+    "prod": "ENV=prod node server.js",
+    "prod:test": "ENV=test node server.js",
+    "test": "ENV=dev jest --watch"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.11",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
-    "express": "~4.16.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-validator": "^6.14.1",
+    "firebase-admin": "^10.3.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.5",
+    "mongoose-geojson-schema": "^2.2.2",
     "morgan": "~1.9.1",
+    "object-assign": "^4.1.1",
+    "selenium-webdriver": "^4.2.0",
+    "xml2js": "^0.4.23"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.1",
     "nodemon": "^2.0.16",
-    "request": "^2.88.2",
-    "selenium-webdriver": "^4.2.0"
+    "supertest": "^6.2.3"
   }
 }

@@ -1,14 +1,15 @@
-const mongoose = require("mongoose");
+require('dotenv').config();
+const mongoose = require('mongoose');
 
 mongoose.connection.once('open', () => console.log('db connected'));
-mongoose.connection.on('error', (error) => console.log('error'));
+mongoose.connection.on('error', (error) => console.log(error));
 
-function connectDB() {
-  mongoose.connect("mongodb+srv://hkh0105:hanhk00700@unicorn.o28wi.mongodb.net/?retryWrites=true&w=majority");
+async function connectDB() {
+  await mongoose.connect(process.env.MONGODB_URL);
 }
 
-function disconnectDB() {
-  mongoose.disconnect()
+async function disconnectDB() {
+  await mongoose.disconnect();
 }
 
 module.exports = {
